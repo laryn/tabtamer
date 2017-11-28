@@ -20,8 +20,17 @@ function tabtamer_install() {
 }
 
 /**
- * Implements hook_uninstall().
+ * Move settings from variables to config.
  */
-function tabtamer_uninstall() {
-  variable_del('tabtamer_tab_settings');
+function tabtamer_update_1000() {
+  // Migrate variables to config.
+  $config = config('tabtamer.settings');
+  $config->set('tab_settings', update_variable_get('tabtamer_tab_settings', array()));
+  $config->set('control_admin', update_variable_get('tabtamer_control_admin', 0));
+  $config->save();
+
+  // Delete variables.
+  update_variable_del('tabtamer_tab_settings');
+  update_variable_del('tabtamer_control_admin');
 }
+?>
